@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
-import { generate } from "shortid";
-import { AsyncStorage } from "react-native";
+import { useState, useEffect } from 'react';
+import { generate } from 'shortid';
+import { AsyncStorage } from 'react-native';
 
 export const useColors = () => {
   const [colors, setColors] = useState([]);
 
   const loadColors = async () => {
-    const colorData = await AsyncStorage.getItem(
-      "@ColorListStore:Colors"
-    );
+    const colorData = await AsyncStorage.getItem('@ColorListStore:Colors');
     if (colorData) {
       const colors = JSON.parse(colorData);
       setColors(colors);
@@ -21,15 +19,18 @@ export const useColors = () => {
   }, []);
 
   useEffect(() => {
-    AsyncStorage.setItem(
-      "@ColorListStore:Colors",
-      JSON.stringify(colors)
-    );
+    AsyncStorage.setItem('@ColorListStore:Colors', JSON.stringify(colors));
   }, [colors]);
 
-  const addColor = color => {
+  const addColor = (color) => {
     const newColor = { id: generate(), color };
     setColors([newColor, ...colors]);
   };
-  return { colors, addColor };
+
+  const removeColor = (color) => {
+    const updatedColors = colors.filter((item) => item.color !== color);
+    setColors(updatedColors);
+  };
+
+  return { colors, addColor, removeColor };
 };
